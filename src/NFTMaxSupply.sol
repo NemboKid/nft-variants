@@ -29,24 +29,26 @@ contract NFTMaxSupply is ERC721, ERC2981, Ownable2Step {
     BitMaps.BitMap private s_bitmap;
     bytes32 public immutable i_merkleRoot;
 
-    constructor(bytes32 _merkleRoot) ERC721("NFTMaxSupply", "MAX") Ownable(msg.sender) {
-        i_merkleRoot = _merkleRoot;
+    event Withdraw(address indexed to, uint256 amount);
+
+    constructor(bytes32 merkleRoot) ERC721("NFTMaxSupply", "MAX") Ownable(msg.sender) {
+        i_merkleRoot = merkleRoot;
         i_owner = msg.sender;
 
         // set default royalty to 2.5%
         _setDefaultRoyalty(msg.sender, 250);
     }
 
-    function mintToken(uint256 _amount) external payable {
-        if (msg.value < (STANDARD_FEE * _amount)) {
+    function mintToken(uint256 amount) external payable {
+        if (msg.value < (STANDARD_FEE * amount)) {
             revert FeeNotEnough();
         }
-        if (s_tokenSupply + _amount >= MAX_SUPPLY) {
+        if (s_tokenSupply + amount >= MAX_SUPPLY) {
             revert ExceedsMaxSupply();
         }
 
-        s_tokenSupply = s_tokenSupply + _amount;
-        _safeMint(msg.sender, _amount);
+        s_tokenSupply = s_tokenSupply + amount;
+        _safeMint(msg.sender, amount);
     }
 
     function mintTokenWithDiscount(uint256 amount, uint256 idx, bytes32[] calldata proof) external payable {
@@ -84,7 +86,7 @@ contract NFTMaxSupply is ERC721, ERC2981, Ownable2Step {
         for (uint256 i = 0; i < amount;) {
             _safeMint(to, tokenId);
             unchecked {
-                tokenId++;
+                ++tokenId;
                 ++i;
             }
         }
@@ -103,10 +105,12 @@ contract NFTMaxSupply is ERC721, ERC2981, Ownable2Step {
     }
 
     function withdraw() external onlyOwner {
-        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        uint256 balance = address(this).balance;
+        (bool success,) = payable(msg.sender).call{value: balance}("");
         if (!success) {
             revert WithdrawalFailed();
         }
+        emit Withdraw(msg.sender, balance);
     }
 
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC2981) returns (bool) {
