@@ -1,0 +1,5 @@
+- Wrapping a basic NFT to create a new token that can be used in governance systems or DAOs. For example, a wrapped NFT could be integrated with the ERC721Votes extension to enable voting capabilities.
+- Wrapped NFTs can be used in DeFi apps, allowing NFT holders to participate in staking, lending, or yield farming with their NFTs.
+- Adding additional utility or features to an existing NFT without modifying the original contract.
+- Closely related to the point above, but non-ERC721 standard NFTs like CryptoPunks can be standardized if they are wrapped by an ERC721 standard contract.
+- Wrappers can also be used when bridging tokens to other chains.

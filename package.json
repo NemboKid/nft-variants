@@ -1,0 +1,11 @@
+{
+  "name": "nft-variants",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "author": "NemboKid <filip.sundgren@hotmail.se>",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/merkle-tree": "^1.0.5"
+  }
+}
